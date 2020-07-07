@@ -11,7 +11,7 @@ from api.serializers import UserModelSerializer
 from utils.response import APIResponse
 
 
-# from api.authentication import JWTAuthentication
+from api.authentication import JWTAuthentication
 class UserDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JSONWebTokenAuthentication]
