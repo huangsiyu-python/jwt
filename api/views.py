@@ -1,17 +1,20 @@
 import re
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import jwt_encode_handler
 from rest_framework_jwt.serializers import jwt_payload_handler
+from rest_framework.generics import ListAPIView
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.models import User
-from api.serializers import UserModelSerializer
+from api.filter import LimitFilter, ComputerFilterSet
+from api.models import User, Computer
+from api.paginations import MyPageNumberPagination, MyLimitPagination, MyCoursePagination
+from api.serializers import UserModelSerializer, ComputerModelSerializer
 from utils.response import APIResponse
-
-
-from api.authentication import JWTAuthentication
+from api.authentication import JWTAuthtication
 class UserDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JSONWebTokenAuthentication]
@@ -28,3 +31,14 @@ class LoginAPIView(APIView):
 
 
 
+class ComputerListAPIView(ListAPIView):
+    queryset = Computer.objects.all()
+    serializer_class = ComputerModelSerializer
+    filter_backends = [SearchFilter, OrderingFilter, LimitFilter, DjangoFilterBackend]
+    search_fields = ["name", "price"]
+    ordering = ["price"]
+
+    # pagination_class = MyPageNumberPagination
+    # pagination_class = MyLimitPagination
+    # pagination_class = MyCoursePagination
+    filter_class = ComputerFilterSet
